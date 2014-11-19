@@ -1,5 +1,7 @@
 # Github Api Key (Settings -> Applications -> Personal Access Tokens)
 GitHubAuthKey = ""
+# name of the organisation in Github
+Organisation = ""
 # SMTP server to send email (hostname:port)
 SMTPServer = ""
 # do you need to authenticate on the smtp server?

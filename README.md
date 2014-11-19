@@ -43,6 +43,9 @@ A Github personal access token is needed to be able to query the Github api.
 Logon to Github and navigate to settings -> applications -> personal access tokens to generate one.
 The read:org scope is needed for this script to function properly.
 
+Organisation = "<Name of the organisation>"
+Go to https://github.com/settings/organizations to find the correct name.
+
 SMTPServer = "<127.0.0.1:25>"
 Mail server that will send the email
 

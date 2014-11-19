@@ -33,9 +33,13 @@ def construct_email(users):
 if config.GitHubAuthKey == "":
     print "Please add your Github api key (Settings -> Applications -> Personal Access Tokens) to config.py\n"
     exit()
+if config.Organisation == "":
+    print "Please add your Github organisation (https://github.com/settings/organizations) to config.py\n"
+    exit()
+
 
 # get all the users that don't have 2 factor authentication enabled
-json_list = do_github_api_request('https://api.github.com/orgs/eVisionSoftware/members?filter=2fa_disabled')
+json_list = do_github_api_request('https://api.github.com/orgs/' + config.Organisation + '/members?filter=2fa_disabled')
 users = []
 
 for user in json_list:
