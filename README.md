@@ -53,34 +53,52 @@ Configuration
 =============
 All the configuration settings are defined in the config.py file.
 
-GitHubAuthKey = "<oauth token>"
-A Github personal access token is needed to be able to query the Github api.
+```python
+GitHubAuthKey = ""
+```
+OAUTH Token: a Github personal access token is needed to be able to query the Github api.
 Logon to Github and navigate to settings -> applications -> personal access tokens to generate one.
 The read:org scope is needed for this script to function properly.
 
-Organisation = "<Name of the organisation>"
+```python
+Organisation = "" 
+```
+Name of the organisation 
 Go to https://github.com/settings/organizations to find the correct name.
 
-DefaultTeamId = "<default team id for adding users to an organization, use the get_all_teams_for_org.py to find the id>"
+```python
+DefaultTeamId = "" 
+```
+Default team id for adding users to an organization, use the get_all_teams_for_org.py to find the id
 
-SMTPServer = "<127.0.0.1:25>"
-Mail server that will send the email
+```python
+SMTPServer = "" 
+```
+Mail server that will send the email (i.e. 127.0.0.1:25)
 
+```python
 SMTPAuth = False
-Do you need to authenticate on the smtp server?
+```
+Do you need to authenticate on the smtp server? (True or False)
 
-SMTPUser = "<user name>"
+```python
+SMTPUser = ""
+```
 SMTP user name (optional, only set when SMTPAuth = True)
 
-SMTPPass = "<password>"
+```python
+SMTPPass = ""
+```
 SMTP password (optional, only set when SMTPAuth = True)
 
+```python
 FromAddress = "githubauditor@example.com"
+```
 The Address that sends the email
 
+```python
 Receivers = []
 Receivers.append("example@email.com")
 Receivers.append("example2@email.com")
+```
 Add email addresses that need to receive the email
-
-
