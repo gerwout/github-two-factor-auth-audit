@@ -1,6 +1,5 @@
 github-two-factor-auth-audit
 ============================
-
 Configurable python script that checks 2fa for every Github user in your organisation.
 It will create an overview of all the users that haven't enabled 2 factor authentication.
 It will send this overview to predefined email addresses.
@@ -30,13 +29,14 @@ Setup Debian based Linux
     source /usr/local/bin/virtualenvwrapper.sh
 - Create a virtual environment
     - mkvirtualenv github-mfa-audit
+- git clone https://github.com/gerwout/github-two-factor-auth-audit.git
 - Install the requirements (i.e. pip install -r requirements.txt)
 - Configure the script (i.e. edit config.py)
 - You can now run python check_mfa.py
 
 Configuration
 =============
-All the configuration settings are deined in the config.py file.
+All the configuration settings are defined in the config.py file.
 
 GitHubAuthKey = "<oauth token>"
 A Github personal access token is needed to be able to query the Github api.
