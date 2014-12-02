@@ -16,6 +16,9 @@ Helper script that shows details from a Github user
 **add_member_to_org.py**
 Add a github user to a team within the organization that is defined in config.py
 
+**delete_member_from_org.py**
+Remove a github user from the organization that is defined in config.py
+
 Setup Windows
 =============
 - Install Python 2.7 (http://docs.python-guide.org/en/latest/starting/install/win/)
@@ -57,6 +60,8 @@ The read:org scope is needed for this script to function properly.
 
 Organisation = "<Name of the organisation>"
 Go to https://github.com/settings/organizations to find the correct name.
+
+DefaultTeamId = "<default team id for adding users to an organization, use the get_all_teams_for_org.py to find the id>"
 
 SMTPServer = "<127.0.0.1:25>"
 Mail server that will send the email
