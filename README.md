@@ -1,8 +1,17 @@
 github-two-factor-auth-audit
 ============================
-Configurable python script that checks 2fa for every Github user in your organisation.
+A bunch off Python scripts that you can use to audit if every GIT user within your organization has two factor authentication enabled.
+
+**check_mfa.py**    
+Configurable python script that checks 2fa for every Github user in your organization.
 It will create an overview of all the users that haven't enabled 2 factor authentication.
 It will send this overview to predefined email addresses.
+
+**get_all_teams_for_org.py**
+Gives an overview of all the teams that are available for your organization.
+
+**get_member_details.py**
+Helper script that shows details from a Github user
 
 Setup Windows
 =============
