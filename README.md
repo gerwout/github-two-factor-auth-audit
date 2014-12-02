@@ -58,7 +58,8 @@ GitHubAuthKey = ""
 ```
 OAUTH Token: a Github personal access token is needed to be able to query the Github api.
 Logon to Github and navigate to settings -> applications -> personal access tokens to generate one.
-The read:org scope is needed for this script to function properly.
+The read:org scope is needed for the check_mfa.py script to function properly.
+To be able to add and/or delete users from an organization the admin:org scope is needed.
 
 ```python
 Organisation = "" 
