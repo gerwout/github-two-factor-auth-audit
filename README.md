@@ -13,6 +13,9 @@ Gives an overview of all the teams that are available for your organization.
 **get_member_details.py**
 Helper script that shows details from a Github user
 
+**add_member_to_org.py**
+Add a github user to a team within the organization that is defined in config.py
+
 Setup Windows
 =============
 - Install Python 2.7 (http://docs.python-guide.org/en/latest/starting/install/win/)
