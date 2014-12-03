@@ -1,7 +1,12 @@
 import smtplib
 import requests
 from requests.auth import HTTPBasicAuth
-import config
+import os
+if os.path.isfile('local_config.py'):
+    import local_config as config
+else:
+    import config
+
 
 def sendemail(from_addr, to_addr_list, subject, message):
     header  = 'From: %s\n' % from_addr

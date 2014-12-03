@@ -1,5 +1,17 @@
 import functions
 import argparse
+import os
+if os.path.isfile('local_config.py'):
+    import local_config as config
+else:
+    import config
+
+if config.GitHubAuthKey == "":
+    print "Please add your Github api key (Settings -> Applications -> Personal Access Tokens) to config.py\n"
+    exit()
+if config.Organisation == "":
+    print "Please add your Github organisation (https://github.com/settings/organizations) to config.py\n"
+    exit()
 
 parser = argparse.ArgumentParser(description='Show details Github user.')
 parser.add_argument('username', metavar='<user name>', nargs=1,

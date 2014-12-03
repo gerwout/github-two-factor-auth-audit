@@ -1,3 +1,4 @@
 .idea
 *.iml
 *.pyc
+local_config.py

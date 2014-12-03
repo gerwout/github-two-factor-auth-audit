@@ -52,6 +52,7 @@ Setup Debian based Linux
 Configuration
 =============
 All the configuration settings are defined in the config.py file.
+It's also possible to create a local_config.py script that contains these settings. If you have a config.py and a local_config.py the local_config.py will have preference.
 
 ```python
 GitHubAuthKey = ""

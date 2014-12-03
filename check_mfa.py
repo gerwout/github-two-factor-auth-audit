@@ -1,4 +1,8 @@
-import config
+import os
+if os.path.isfile('local_config.py'):
+    import local_config as config
+else:
+    import config
 import functions
 
 if config.GitHubAuthKey == "":
