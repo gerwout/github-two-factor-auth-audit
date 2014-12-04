@@ -104,3 +104,9 @@ Receivers.append("example@email.com")
 Receivers.append("example2@email.com")
 ```
 Add email addresses that need to receive the email
+
+```python
+SQLFile = ""
+```
+The location of the Sqlite database (if it does not exists, it will be created).
+On Windows escape the backslash, i.e.: c:\\databases\\multi_factor.db
