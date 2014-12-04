@@ -18,3 +18,6 @@ FromAddress = ""
 Receivers = []
 #Receivers.append("example@email.com")
 #Receivers.append("example2@email.com")
+# location of the sql lite database
+# On Windows escape the backslash, i.e.: c:\\databases\\multi_factor.db
+SQLFile = ""
