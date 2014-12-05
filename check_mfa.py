@@ -22,7 +22,8 @@ else:
     conn, curs = functions.connect_db()
 
 # get all the users that don't have 2 factor authentication enabled
-json_list = functions.do_github_api_request('https://api.github.com/orgs/' + config.Organisation + '/members?filter=2fa_disabled')
+json_list = functions.do_github_api_request('https://api.github.com/orgs/' + config.Organisation + '/members',
+                                            params={"filter": "2fa_disabled"})
 users = []
 
 for user in json_list:

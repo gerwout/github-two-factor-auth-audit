@@ -74,18 +74,35 @@ def sendemail(from_addr, to_addr_list, subject, message):
         print('Exception details: %s' % (value.strerror))
 
 
-def do_github_api_request(url, method='get'):
+def do_github_api_request(url, params={}, method='get'):
     headers = {'User-Agent': 'two_factor_auth_auditor'}
     if method == 'get':
-        response = requests.get(url, auth=HTTPBasicAuth(config.GitHubAuthKey, 'x-oauth-basic'), headers=headers)
+        if not 'page' in params.keys():
+            params["page"] = 1
+        # 100 is the maximum for Github
+        if not 'per_page' in params.keys():
+            params['per_page'] = 100
+        response = requests.get(url, params=params, auth=HTTPBasicAuth(config.GitHubAuthKey, 'x-oauth-basic'),
+                                headers=headers)
+        http_code = response.status_code
+        if http_code == 200:
+            results = response.json()
+            if len(results) == params['per_page']:
+                params['page'] = params['page'] + 1
+                results = results + do_github_api_request(url, params=params)
+                return results
+            else:
+                return results
+        else:
+            return response.status_code, False
     elif method == 'put':
         response = requests.put(url, auth=HTTPBasicAuth(config.GitHubAuthKey, 'x-oauth-basic'), headers=headers)
+        try:
+            return response.json()
+        except:
+            return response.status_code, False
     elif method == 'delete':
         response = requests.delete(url, auth=HTTPBasicAuth(config.GitHubAuthKey, 'x-oauth-basic'), headers=headers)
-
-    if response.status_code == 200:
-        return response.json()
-    else:
         try:
             return response.json()
         except:
