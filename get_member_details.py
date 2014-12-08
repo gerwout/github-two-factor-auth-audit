@@ -1,7 +1,13 @@
 import functions
 import argparse
 import os
-if os.path.isfile('local_config.py'):
+cur_path = os.getcwd()
+if (os.name == 'nt'):
+    path_seperatot = "\\"
+else:
+    path_seperatot = "/"
+
+if os.path.isfile(cur_path + path_seperatot + 'local_config.py'):
     import local_config as config
 else:
     import config

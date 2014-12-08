@@ -1,9 +1,17 @@
 import os
-if os.path.isfile('local_config.py'):
+import functions
+
+cur_path = os.getcwd()
+if (os.name == 'nt'):
+    path_seperatot = "\\"
+else:
+    path_seperatot = "/"
+
+if os.path.isfile(cur_path + path_seperatot + 'local_config.py'):
     import local_config as config
 else:
     import config
-import functions
+
 
 if config.GitHubAuthKey == "":
     print "Please add your Github api key (Settings -> Applications -> Personal Access Tokens) to config.py\n"
