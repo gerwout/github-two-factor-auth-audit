@@ -6,6 +6,9 @@ A bunch off Python scripts that you can use to audit if every GIT user within yo
 Configurable python script that checks 2fa for every Github user in your organization.
 It will create an overview of all the users that haven't enabled 2 factor authentication.
 It will send this overview to predefined email addresses.
+It has 2 optional arguments:
+--skip-sending-email Don't send an email, show it instead
+--dont-update-counter Don't update the alert counter in the sqlite database
 
 **get_all_teams_for_org.py**
 Gives an overview of all the teams that are available for your organization.

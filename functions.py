@@ -40,20 +40,21 @@ def create_db_structure(conn, curs):
     curs.execute(index_sql)
     conn.commit()
 
-def insert_user_row_in_db(conn, curs, user):
+def insert_user_row_in_db(conn, curs, user, dont_update_counter):
     login = user.get('login', False)
     cur_date = datetime.now().strftime("%Y-%m-%d")
     if login:
         select_sql = "SELECT count(*) as count FROM github_users WHERE github_login = ?"
         res = curs.execute(select_sql, (login,))
-        count = res.fetchone()[0]
-        if count == 0:
-            insert_sql = "INSERT INTO github_users(github_login, first_alert, alert_count) VALUES (?, ?, 1)"
-            res = curs.execute(insert_sql, (login, cur_date))
-        else:
-            update_sql = "UPDATE github_users SET alert_count=alert_count + 1 WHERE github_login = ?"
-            res = curs.execute(update_sql, (login, ))
-        conn.commit()
+        if not dont_update_counter:
+            count = res.fetchone()[0]
+            if count == 0:
+                insert_sql = "INSERT INTO github_users(github_login, first_alert, alert_count) VALUES (?, ?, 1)"
+                res = curs.execute(insert_sql, (login, cur_date))
+            else:
+                update_sql = "UPDATE github_users SET alert_count=alert_count + 1 WHERE github_login = ?"
+                res = curs.execute(update_sql, (login, ))
+            conn.commit()
         select_sql = "SELECT * FROM github_users WHERE github_login = ?"
         res = curs.execute(select_sql, (login,))
         item = res.fetchone()
