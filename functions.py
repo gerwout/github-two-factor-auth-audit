@@ -73,7 +73,7 @@ def sendemail(from_addr, to_addr_list, subject, message):
         server.starttls()
         if (config.SMTPAuth):
             server.login(config.SMTPUser, config.SMTPPass)
-        problems = server.sendmail(from_addr, to_addr_list, message.encode("iso-8859-15"))
+        problems = server.sendmail(from_addr, to_addr_list, message.encode(sys.stdout.encoding))
         server.quit()
     except:
         type, value, traceback = sys.exc_info()
