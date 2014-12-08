@@ -2,11 +2,11 @@ import os
 import functions
 cur_path = os.getcwd()
 if (os.name == 'nt'):
-    path_seperatot = "\\"
+    path_seperator = "\\"
 else:
-    path_seperatot = "/"
+    path_seperator = "/"
 
-if os.path.isfile(cur_path + path_seperatot + 'local_config.py'):
+if os.path.isfile(cur_path + path_seperator + 'local_config.py'):
     import local_config as config
 else:
     import config
