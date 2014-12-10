@@ -113,3 +113,56 @@ SQLFile = ""
 ```
 The location of the Sqlite database (if it does not exists, it will be created).
 On Windows escape the backslash, i.e.: c:\\databases\\multi_factor.db
+
+```python
+LDAP_REQUIRE_VALID_CERT = True
+```
+Your ldap/active directory server sends a certificate, this should be validated (value needs to be True or False).
+It's not a good idea to turn this off, it makes your SSL/TLS connection vulnerable for MITM attacks.
+
+```python
+LDAP_CA_CERT_ISSUER = ""
+```
+The certificate of the certificate authority that has signed the certificate from the LDAP/Active Directory server
+This needs to be a base64 encoded pem file
+On Windows escape the backslash, i.e.: c:\\trusted-certs\\certificate.pem
+Only used when LDAP_REQUIRE_VALID_CERT = True
+
+```python
+LDAP_HOST = ""
+```
+Hostname of the LDAP / Active Directory server.
+i.e. ldap://ad.domain.local:389 or ldaps://ad.domain.local:636
+
+```python
+LDAP_SCHEMA_FIELD = ''
+```
+Name of the field that contains the Github user name, it's case sensitive.
+i.e. extensionAttribute1 can be used if you don't want to change your AD schema.
+
+```python
+LDAP_USER = ""
+```
+Username that is going to query the LDAP / Active Directory server i.e. username@domain.local.
+
+```python
+LDAP_PASS = ""
+```
+Password that is used to authenticate.
+
+```python
+LDAP_DOMAIN = ""
+```
+Domain that is going to be queried (i.e. domain.local).
+
+```python
+LDAP_OU_LIST = []
+LDAP_OU_LIST.append('MyBusiness')
+```
+Organisational unit(s) that will be used when searching the LDAP / Active Directory server
+
+```python
+LDAP_IGNORE_GITHUB_USERS = []
+LDAP_IGNORE_GITHUB_USERS.append("ignoreuser")
+```
+Github user names that will be ignored if they are found while using the get_gitgub_users_from_ad.py script
