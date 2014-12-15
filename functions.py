@@ -61,8 +61,12 @@ def insert_user_row_in_db(conn, curs, user, dont_update_counter):
         select_sql = "SELECT * FROM github_users WHERE github_login = ?"
         res = curs.execute(select_sql, (login,))
         item = res.fetchone()
-        first_alert = item[2]
-        alert_count = item[3]
+        if item:
+            first_alert = item[2]
+            alert_count = item[3]
+        else:
+            first_alert = 1
+            alert_count = 1
         return first_alert, alert_count
 
 
