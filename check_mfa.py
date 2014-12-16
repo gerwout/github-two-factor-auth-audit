@@ -2,7 +2,7 @@ import os
 import functions
 import argparse
 
-cur_path = os.getcwd()
+cur_path = os.path.dirname(os.path.realpath(__file__))
 if (os.name == 'nt'):
     path_seperator = "\\"
 else:
@@ -12,7 +12,6 @@ if os.path.isfile(cur_path + path_seperator + 'local_config.py'):
     import local_config as config
 else:
     import config
-
 
 if config.GitHubAuthKey == "":
     print "Please add your Github api key (Settings -> Applications -> Personal Access Tokens) to config.py\n"

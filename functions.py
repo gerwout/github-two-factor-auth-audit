@@ -8,7 +8,7 @@ import sys
 import re
 import ldap
 
-cur_path = os.getcwd()
+cur_path = os.path.dirname(os.path.realpath(__file__))
 if (os.name == 'nt'):
     path_seperator = "\\"
 else:
