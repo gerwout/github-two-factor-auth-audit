@@ -139,8 +139,8 @@ def construct_email(users):
             login = '(-not set-)'
         if html_url == None:
             html_url = '(-not set-)'
-
-        message = message + name + " - " + login + " - " + html_url + " - " + first_alert + " - " + alert_count + "\n"
+        message = message + name.encode('utf-8') + " - " + login.encode('utf-8') + " - " + html_url.encode('utf-8') + \
+                  " - " + first_alert.encode('utf-8') + " - " + alert_count.encode('utf-8') + "\n"
 
     return message
 

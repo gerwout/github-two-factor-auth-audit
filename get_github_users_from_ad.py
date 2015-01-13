@@ -58,6 +58,7 @@ count = len(not_in_list)
 if count > 0:
     message = "The following Github users are not set in the LDAP server:\n\n"
     for username in not_in_list:
+        username = username.encode('utf-8')
         message = message + username + " (https://github.com/" + username  + ")\n"
     message = message + "\nPlease edit the " + config.LDAP_SCHEMA_FIELD + " property and add the Github user name.\n"
     if skip_sending_email:
