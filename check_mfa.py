@@ -82,7 +82,7 @@ else:
             message=my_file.read().replace('\n', '')
 
         for email in email_users:
-            functions.send_mail(config.FromAddress, [email,], "Please enable 2-factor authentication in Github", message,
+            functions.send_mail(config.FromAddress, email, "Please enable 2-factor authentication in Github", message,
                                 files=[config.GITHUB_INSTRUCTIONS_DOC,])
 
 
