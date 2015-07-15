@@ -2,3 +2,4 @@
 *.iml
 *.pyc
 local_config.py
+templates/custom/*

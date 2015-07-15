@@ -47,3 +47,8 @@ LDAP_OU_LIST.append('MyBusiness')
 # Github user names that will be ignored if they are found while using the get_gitgub_users_from_ad.py script
 LDAP_IGNORE_GITHUB_USERS = []
 LDAP_IGNORE_GITHUB_USERS.append("ignoreuser")
+# send email with instructions to users that don't have 2fa enabled
+SEND_EMAIL_TO_USERS = False
+# Full path to document that contains Github 2fa instructions
+# On Windows escape the backslash, i.e.: c:\\docs\\multi_factor.pdf
+GITHUB_INSTRUCTIONS_DOC = "c:\\docs\\multi_factor.pdf"

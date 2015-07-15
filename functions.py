@@ -1,12 +1,18 @@
+from email import encoders
+from email.mime.application import MIMEApplication
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
 import smtplib
 import requests
 import sqlite3
 from datetime import datetime
-from requests.auth import HTTPBasicAuth
 import os
 import sys
 import re
 import ldap
+from os.path import basename
 
 cur_path = os.path.dirname(os.path.realpath(__file__))
 if (os.name == 'nt'):
@@ -90,15 +96,15 @@ def sendemail(from_addr, to_addr_list, subject, message):
 
 
 def do_github_api_request(url, params={}, method='get'):
-    headers = {'User-Agent': 'two_factor_auth_auditor'}
+    headers = {'User-Agent': 'two_factor_auth_auditor', 'Authorization': "token " + config.GitHubAuthKey}
     if method == 'get':
         if not 'page' in params.keys():
             params["page"] = 1
         # 100 is the maximum for Github
         if not 'per_page' in params.keys():
             params['per_page'] = 100
-        response = requests.get(url, params=params, auth=HTTPBasicAuth(config.GitHubAuthKey, 'x-oauth-basic'),
-                                headers=headers)
+        response = requests.get(url, params=params, headers=headers)
+
         http_code = response.status_code
         if http_code == 200:
             results = response.json()
@@ -108,16 +114,23 @@ def do_github_api_request(url, params={}, method='get'):
                 return results
             else:
                 return results
+        elif http_code == 403:
+            rate_limit_remaining = response.headers.get('x-ratelimit-remaining', False)
+            if rate_limit_remaining == '0':
+                raise Exception, 'The given token has been rate limited, please retry in an hour'
+            return response.status_code, False, response.json()
         else:
-            return response.status_code, False
+            # print(response.json())
+            # print(response.headers)
+            return response.status_code, False, response.json()
     elif method == 'put':
-        response = requests.put(url, auth=HTTPBasicAuth(config.GitHubAuthKey, 'x-oauth-basic'), headers=headers)
+        response = requests.put(url, headers=headers)
         try:
             return response.json()
         except:
             return response.status_code, False
     elif method == 'delete':
-        response = requests.delete(url, auth=HTTPBasicAuth(config.GitHubAuthKey, 'x-oauth-basic'), headers=headers)
+        response = requests.delete(url, headers=headers)
         try:
             return response.json()
         except:
@@ -205,3 +218,44 @@ def search_ldap(conn, base_dn, search_filter):
             if e.message.has_key('info'):
                 print e.message['info']
             sys.exit()
+
+def get_email_address_for_users(conn, base_dn, users):
+    email_users = []
+    for user in users:
+        search_filter = "(&(objectCategory=user)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(" + config.LDAP_SCHEMA_FIELD + "=" \
+                        + ldap.dn.escape_dn_chars(user['login']) + "))"
+        result = search_ldap(conn, base_dn, search_filter)
+        count = len(result)
+        if count == 1:
+            user_details = result[0][0][1]
+            email_users.append(user_details['userPrincipalName'])
+
+    return email_users
+
+def send_mail(send_from, send_to, subject, text, files=None):
+    assert isinstance(send_to, list)
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = COMMASPACE.join(send_to)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, 'html'))
+
+    for f in files or []:
+        with open(f, "rb") as fil:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(fil.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', "attachment; filename= %s" % basename(f))
+            msg.attach(part)
+    try:
+        smtp = smtplib.SMTP(config.SMTPServer)
+        smtp.starttls()
+        if (config.SMTPAuth):
+            smtp.login(config.SMTPUser, config.SMTPPass)
+
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.quit()
+    except:
+        type, value, traceback = sys.exc_info()
+        print("Could not send an email!")
+        print('Exception details: %s' % (value.strerror))

@@ -23,6 +23,18 @@ if config.SQLFile == "":
     print "Please add a SQLite database to config.py\n"
     exit()
 
+base_dn = ""
+dc_string = ""
+for ou in config.LDAP_OU_LIST:
+    base_dn = "OU="+ ou + ","
+
+domain_list = config.LDAP_DOMAIN.split(".")
+dc_string = ""
+for part in domain_list:
+    dc_string = dc_string + "DC="+part+","
+dc_string = dc_string[:-1]
+base_dn = base_dn + dc_string
+
 parser = argparse.ArgumentParser(description='Audit the Github users within your organisation to check if two factor authentication has been enabled.')
 parser.add_argument('--skip-sending-email', nargs='?', default=False, help='Don\'t send an email, show it instead', const=True)
 parser.add_argument('--dont-update-counter', nargs='?', default=False, help='Don\'t update the amount of alerts', const=True)
@@ -54,5 +66,23 @@ email = functions.construct_email(users)
 if skip_sending_email:
     print email
 else:
+    # lets send an overview email
     functions.sendemail(config.FromAddress, config.Receivers, "Github Two Factor authentication audit", email)
+    if config.SEND_EMAIL_TO_USERS:
+        ldap_conn = functions.connect_and_bind_to_ldap(config.LDAP_HOST.lower(), config.LDAP_USER, config.LDAP_PASS)
+        email_users = functions.get_email_address_for_users(ldap_conn, base_dn, users)
+        ldap_conn.unbind()
+        # check if we have a custom email template
+        if os.path.isfile(cur_path+"/templates/custom/email_instructions.html"):
+            file_name = cur_path+"/templates/custom/email_instructions.html"
+        else:
+            file_name = cur_path+"/templates/email_instructions.html"
+
+        with open (file_name, "r") as my_file:
+            message=my_file.read().replace('\n', '')
+
+        for email in email_users:
+            functions.send_mail(config.FromAddress, [email,], "Please enable 2-factor authentication in Github", message,
+                                files=[config.GITHUB_INSTRUCTIONS_DOC,])
+
 

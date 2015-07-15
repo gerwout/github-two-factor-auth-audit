@@ -19,7 +19,6 @@ args = parser.parse_args()
 skip_sending_email = args.skip_sending_email
 
 conn = functions.connect_and_bind_to_ldap(config.LDAP_HOST.lower(), config.LDAP_USER, config.LDAP_PASS)
-
 base_dn = ""
 dc_string = ""
 for ou in config.LDAP_OU_LIST:
@@ -32,7 +31,7 @@ for part in domain_list:
 dc_string = dc_string[:-1]
 base_dn = base_dn + dc_string
 
-search_filter = "(&(objectCategory=user)(objectClass=user)(" + config.LDAP_SCHEMA_FIELD + "=*))"
+search_filter = "(&(objectCategory=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(objectClass=user)(" + config.LDAP_SCHEMA_FIELD + "=*))"
 result_set = functions.search_ldap(conn, base_dn, search_filter)
 
 ldap_github_users = []

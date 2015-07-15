@@ -6,6 +6,7 @@ A bunch off Python scripts that you can use to audit if every GIT user within yo
 Configurable python script that checks 2fa for every Github user in your organization.
 It will create an overview of all the users that haven't enabled 2 factor authentication.
 It will send this overview to predefined email addresses.
+It can optionally send an email to the affected users with some instructions (i.e. SEND_EMAIL_TO_USERS and GITHUB_INSTRUCTIONS_DOC configuration settings).
 It has 2 optional arguments:
 --skip-sending-email Don't send an email, show it instead
 --dont-update-counter Don't update the alert counter in the sqlite database
@@ -112,7 +113,7 @@ Add email addresses that need to receive the email
 SQLFile = ""
 ```
 The location of the Sqlite database (if it does not exists, it will be created).
-On Windows escape the backslash, i.e.: c:\\databases\\multi_factor.db
+On Windows escape the backslash, i.e.: c:\\\\databases\\\\multi_factor.db
 
 ```python
 LDAP_REQUIRE_VALID_CERT = True
@@ -166,3 +167,17 @@ LDAP_IGNORE_GITHUB_USERS = []
 LDAP_IGNORE_GITHUB_USERS.append("ignoreuser")
 ```
 Github user names that will be ignored if they are found while using the get_gitgub_users_from_ad.py script
+```python
+SEND_EMAIL_TO_USERS = False
+```
+Send an email with Github 2fa instructions to the user (True or False)
+```python
+GITHUB_INSTRUCTIONS_DOC = "c:\\docs\\multi_factor.pdf"
+```
+Location of the document that contains instructions to setup 2fa in Github
+
+check_mfa.py: Using a custom email template for the users email 
+===============================================================
+If the configuration option SEND_EMAIL_TO_USERS = True and the GITHUB_INSTRUCTIONS_DOC setting is set, it will send an email with instructions to all the affected users.
+The default email text is defined in templates/email_instructions.html. If you copy this file in templates/custom/email_instructions.html this file will be used instead.
+This way it's possible to customize the text within the email.
