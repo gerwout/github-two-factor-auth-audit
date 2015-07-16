@@ -69,7 +69,6 @@ else:
     # lets send an overview email
     functions.send_mail(config.FromAddress, config.Receivers, "Github Two Factor authentication audit", email,
                         type="plain")
-    exit()
     if config.SEND_EMAIL_TO_USERS:
         ldap_conn = functions.connect_and_bind_to_ldap(config.LDAP_HOST.lower(), config.LDAP_USER, config.LDAP_PASS)
         email_users = functions.get_email_address_for_users(ldap_conn, base_dn, users)

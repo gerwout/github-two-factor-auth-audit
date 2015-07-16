@@ -167,14 +167,26 @@ LDAP_IGNORE_GITHUB_USERS = []
 LDAP_IGNORE_GITHUB_USERS.append("ignoreuser")
 ```
 Github user names that will be ignored if they are found while using the get_gitgub_users_from_ad.py script
+
 ```python
 SEND_EMAIL_TO_USERS = False
 ```
 Send an email with Github 2fa instructions to the user (True or False)
+
 ```python
 GITHUB_INSTRUCTIONS_DOC = "c:\\docs\\multi_factor.pdf"
 ```
 Location of the document that contains instructions to setup 2fa in Github
+
+```python
+CACHE_GITHUB_CALLS = True
+```
+Cache the Github responses (True or False)
+
+```python
+CACHE_TIME_IN_SECONDS = 3600
+```
+Amount of seconds that the Github cache will be re-used
 
 check_mfa.py: Using a custom email template for the users email 
 ===============================================================

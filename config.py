@@ -52,3 +52,7 @@ SEND_EMAIL_TO_USERS = False
 # Full path to document that contains Github 2fa instructions
 # On Windows escape the backslash, i.e.: c:\\docs\\multi_factor.pdf
 GITHUB_INSTRUCTIONS_DOC = "c:\\docs\\multi_factor.pdf"
+# Cache the Github responses
+CACHE_GITHUB_CALLS = True
+# Refresh the cached version after x seconds
+CACHE_TIME_IN_SECONDS = 3600

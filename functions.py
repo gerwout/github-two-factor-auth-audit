@@ -1,18 +1,22 @@
+import calendar
 from email import encoders
-from email.mime.application import MIMEApplication
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import COMMASPACE, formatdate
+from email.utils import COMMASPACE
 import smtplib
+from datetime import datetime
 import requests
 import sqlite3
-from datetime import datetime
+import time
 import os
 import sys
 import re
 import ldap
+import hashlib
 from os.path import basename
+import tempfile
+import cPickle as pickle
 
 cur_path = os.path.dirname(os.path.realpath(__file__))
 if (os.name == 'nt'):
@@ -76,45 +80,70 @@ def insert_user_row_in_db(conn, curs, user, dont_update_counter):
         return first_alert, alert_count
 
 def do_github_api_request(url, params={}, method='get'):
-    headers = {'User-Agent': 'two_factor_auth_auditor', 'Authorization': "token " + config.GitHubAuthKey}
+    tmp_dir = tempfile.gettempdir() + path_seperator
+    cache_name = tmp_dir + hashlib.md5(url + str(params) + method).hexdigest()
+
+    if config.CACHE_GITHUB_CALLS and method == "get" and os.path.isfile(cache_name):
+        file_time = os.path.getmtime(cache_name)
+        cur_time = calendar.timegm(time.gmtime())
+        if cur_time - file_time <= config.CACHE_TIME_IN_SECONDS:
+            use_cache = True
+        else:
+            use_cache = False
+    else:
+        use_cache = False
+
     if method == 'get':
         if not 'page' in params.keys():
             params["page"] = 1
         # 100 is the maximum for Github
         if not 'per_page' in params.keys():
             params['per_page'] = 100
-        response = requests.get(url, params=params, headers=headers)
 
-        http_code = response.status_code
-        if http_code == 200:
-            results = response.json()
-            if len(results) == params['per_page']:
-                params['page'] = params['page'] + 1
-                results = results + do_github_api_request(url, params=params)
-                return results
+    if not use_cache:
+        headers = {'User-Agent': 'two_factor_auth_auditor', 'Authorization': "token " + config.GitHubAuthKey}
+        if method == 'get':
+            response = requests.get(url, params=params, headers=headers)
+            http_code = response.status_code
+            if http_code == 200:
+                results = response.json()
+                pickle.dump(results, open(cache_name, "wb"))
+                if len(results) == params['per_page']:
+                    params['page'] = params['page'] + 1
+                    results = results + do_github_api_request(url, params=params)
+                    return results
+                else:
+                    return results
+            elif http_code == 403:
+                rate_limit_remaining = response.headers.get('x-ratelimit-remaining', False)
+                if rate_limit_remaining == '0':
+                    raise Exception, 'The given token has been rate limited, please retry in an hour'
+                return response.status_code, False, response.json()
             else:
-                return results
-        elif http_code == 403:
-            rate_limit_remaining = response.headers.get('x-ratelimit-remaining', False)
-            if rate_limit_remaining == '0':
-                raise Exception, 'The given token has been rate limited, please retry in an hour'
-            return response.status_code, False, response.json()
+                # print(response.json())
+                # print(response.headers)
+                return response.status_code, False, response.json()
+        elif method == 'put':
+            response = requests.put(url, headers=headers)
+            try:
+                return response.json()
+            except:
+                return response.status_code, False
+        elif method == 'delete':
+            response = requests.delete(url, headers=headers)
+            try:
+                return response.json()
+            except:
+                return response.status_code, False
+    else:
+        results = pickle.load(open(cache_name, "rb"))
+        if len(results) == params['per_page']:
+            params['page'] = params['page'] + 1
+            results = results + do_github_api_request(url, params=params)
+            return results
         else:
-            # print(response.json())
-            # print(response.headers)
-            return response.status_code, False, response.json()
-    elif method == 'put':
-        response = requests.put(url, headers=headers)
-        try:
-            return response.json()
-        except:
-            return response.status_code, False
-    elif method == 'delete':
-        response = requests.delete(url, headers=headers)
-        try:
-            return response.json()
-        except:
-            return response.status_code, False
+            return results
+
 
 def construct_email(users):
     message = "The following users don't have two factor authentication enabled:\n"
