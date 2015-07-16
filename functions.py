@@ -75,26 +75,6 @@ def insert_user_row_in_db(conn, curs, user, dont_update_counter):
             alert_count = 1
         return first_alert, alert_count
 
-
-def sendemail(from_addr, to_addr_list, subject, message):
-    header  = 'From: %s\n' % from_addr
-    header += 'To: %s\n' % ','.join(to_addr_list)
-    header += 'Subject: %s\n\n' % subject
-    message = header + message
-
-    try:
-        server = smtplib.SMTP(config.SMTPServer)
-        server.starttls()
-        if (config.SMTPAuth):
-            server.login(config.SMTPUser, config.SMTPPass)
-        problems = server.sendmail(from_addr, to_addr_list, message)
-        server.quit()
-    except:
-        type, value, traceback = sys.exc_info()
-        print("Could not send an email!")
-        print('Exception details: %s' % (value.strerror))
-
-
 def do_github_api_request(url, params={}, method='get'):
     headers = {'User-Agent': 'two_factor_auth_auditor', 'Authorization': "token " + config.GitHubAuthKey}
     if method == 'get':
@@ -232,13 +212,14 @@ def get_email_address_for_users(conn, base_dn, users):
 
     return email_users
 
-def send_mail(send_from, send_to, subject, text, files=None):
+# @type: html or plain
+def send_mail(send_from, send_to, subject, text, files=None, type="html"):
     assert isinstance(send_to, list)
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = COMMASPACE.join(send_to)
     msg['Subject'] = subject
-    msg.attach(MIMEText(text, 'html'))
+    msg.attach(MIMEText(text, type))
 
     for f in files or []:
         with open(f, "rb") as fil:
@@ -258,4 +239,5 @@ def send_mail(send_from, send_to, subject, text, files=None):
     except:
         type, value, traceback = sys.exc_info()
         print("Could not send an email!")
-        print('Exception details: %s' % (value.strerror))
+        print(type)
+        print(value)

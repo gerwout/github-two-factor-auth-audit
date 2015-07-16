@@ -63,6 +63,7 @@ if count > 0:
     if skip_sending_email:
         print message
     else:
-        functions.sendemail(config.FromAddress, config.Receivers, "Github users that are nor registered in LDAP", message)
+        functions.send_mail(config.FromAddress, config.Receivers, "Github users that are not registered in LDAP",
+                            message, type="plain")
 
 conn.unbind()
