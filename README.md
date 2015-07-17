@@ -23,6 +23,16 @@ Add a github user to a team within the organization that is defined in config.py
 **delete_member_from_org.py**
 Remove a github user from the organization that is defined in config.py
 
+**get_github_users_from_ad.py**
+Check if all Github users within an organisation are registered in LDAP
+It has 1 optional argument:
+--skip-sending-email Don't send an email, show it instead
+
+**get_duplicate_github_names_from_ad.py**
+Check if the same Github user name has been registered multiple times in Active Directory.
+It has 1 optional argument:
+--skip-sending-email Don't send an email, show it instead
+
 Setup Windows
 =============
 - Install Python 2.7 (http://docs.python-guide.org/en/latest/starting/install/win/)

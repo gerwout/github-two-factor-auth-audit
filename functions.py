@@ -228,12 +228,17 @@ def search_ldap(conn, base_dn, search_filter):
                 print e.message['info']
             sys.exit()
 
+def get_ad_users_from_github_name(ldap_conn, base_dn, user_name):
+        search_filter = "(&(objectCategory=user)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(" \
+                        + config.LDAP_SCHEMA_FIELD + "=" + ldap.dn.escape_dn_chars(user_name) + "))"
+        result = search_ldap(ldap_conn, base_dn, search_filter)
+
+        return result
+
 def get_email_address_for_users(conn, base_dn, users):
     email_users = []
     for user in users:
-        search_filter = "(&(objectCategory=user)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(" + config.LDAP_SCHEMA_FIELD + "=" \
-                        + ldap.dn.escape_dn_chars(user['login']) + "))"
-        result = search_ldap(conn, base_dn, search_filter)
+        result = get_ad_users_from_github_name(conn, base_dn, user['login'])
         count = len(result)
         if count == 1:
             user_details = result[0][0][1]

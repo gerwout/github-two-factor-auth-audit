@@ -13,7 +13,7 @@ if os.path.isfile(cur_path + path_seperator + 'local_config.py'):
 else:
     import config
 
-parser = argparse.ArgumentParser(description='Check if all Github users within an organisation are registered in LDAP')
+parser = argparse.ArgumentParser(description='Check for Github user names that are registered multiple times in LDAP')
 parser.add_argument('--skip-sending-email', nargs='?', default=False, help='Don\'t send an email, show it instead', const=True)
 args = parser.parse_args()
 skip_sending_email = args.skip_sending_email
@@ -41,26 +41,22 @@ for user in result_set:
     github_user_name = user_details[config.LDAP_SCHEMA_FIELD][0]
     ldap_github_users.append(github_user_name.lower())
 
-github_members = functions.do_github_api_request('https://api.github.com/orgs/' + config.Organisation + '/members')
+duplicate_names = set([x for x in ldap_github_users if ldap_github_users.count(x) > 1])
+# nothing to do, it all looks fine
+if len(duplicate_names) == 0:
+    exit()
 
-github_users = []
-for member in github_members:
-    login = member['login'].lower()
-    if not login in (name.lower() for name in config.LDAP_IGNORE_GITHUB_USERS):
-        github_users.append(login)
+message = "The following Github users are registered multiple times in AD:\n\n"
+for name in duplicate_names:
+    users = functions.get_ad_users_from_github_name(conn, base_dn, name)
+    message = message + name + ": "
+    for user in users:
+        message = message + str(user[0][1]["distinguishedName"]) + " "
+    message = message + "\n"
 
-not_in_list = list(set(github_users) - set(ldap_github_users))
-count = len(not_in_list)
-if count > 0:
-    message = "The following Github users are not set in the LDAP server:\n\n"
-    for username in not_in_list:
-        username = username.encode('utf-8')
-        message = message + username + " (https://github.com/" + username  + ")\n"
-    message = message + "\nPlease edit the " + config.LDAP_SCHEMA_FIELD + " property and add the Github user name.\n"
-    if skip_sending_email:
-        print message
-    else:
-        functions.send_mail(config.FromAddress, config.Receivers, "Github users that are not registered in LDAP",
-                            message, type="plain")
-
+if skip_sending_email:
+    print message
+else:
+    functions.send_mail(config.FromAddress, config.Receivers, "Github users that are registered multiple times in LDAP",
+                        message, type="plain")
 conn.unbind()
