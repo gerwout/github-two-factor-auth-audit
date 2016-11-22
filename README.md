@@ -33,6 +33,12 @@ Check if the same Github user name has been registered multiple times in Active 
 It has 1 optional argument:
 --skip-sending-email Don't send an email, show it instead
 
+**check_forks.py**
+Get all public and private repositories for an organization.
+For the private repositories it will list the forks as well.
+It has 1 optional argument:
+--skip-sending-email Don't send an email, show it instead
+
 Setup Windows
 =============
 - Install Python 2.7 (http://docs.python-guide.org/en/latest/starting/install/win/)
