@@ -46,7 +46,7 @@ Setup Windows
 - cd github-two-factor-auth-audit
 - Create a virtual environment (i.e. virtualenv github-mfa-audit)
 - Switch to that virtual environment (i.e. run activate.bat in the virtual environment)
-- Install the requirements (i.e. pip install -r requirements.txt)
+- Install the requirements (i.e. pip install -r requirements.txt), binary python-ldap package for Windows can be found here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#python-ldap
 - Configure the script (i.e. edit config.py)
 - You can now run python check_mfa.py
 
