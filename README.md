@@ -39,6 +39,14 @@ For the private repositories it will list the forks as well.
 It has 1 optional argument:
 --skip-sending-email Don't send an email, show it instead
 
+**search_org_code.py**
+Helper script that searches through the source code in all the repositories from the organization.
+It will export the results to an Excel file
+Arguments:
+--terms Term(s) to search for
+--excel Excel file name
+--extension (optional) Extension filter (i.e. py, c, xml), don't add a dot.
+
 Setup Windows
 =============
 - Install Python 2.7 (http://docs.python-guide.org/en/latest/starting/install/win/)

@@ -79,7 +79,7 @@ def insert_user_row_in_db(conn, curs, user, dont_update_counter):
             alert_count = 1
         return first_alert, alert_count
 
-def do_github_api_request(url, params={}, method='get'):
+def do_github_api_request(url, params={}, method='get', add_headers=[]):
     tmp_dir = tempfile.gettempdir() + path_seperator
     cache_name = tmp_dir + hashlib.md5(url + str(params) + method).hexdigest()
 
@@ -102,6 +102,9 @@ def do_github_api_request(url, params={}, method='get'):
 
     if not use_cache:
         headers = {'User-Agent': 'two_factor_auth_auditor', 'Authorization': "token " + config.GitHubAuthKey}
+        for header in add_headers:
+            headers.update(header)
+
         if method == 'get':
             response = requests.get(url, params=params, headers=headers)
             http_code = response.status_code
